@@ -49,7 +49,7 @@ for a different bounty and was not touched.
   - 441951f LICENSE: MIT
   - 5de686b Add the perfect pickup line entry
   - f3f2294 Refactor validation to collect all problems
-  - (log commit, HEAD — see below)
+  - (log commit, HEAD)
 
 ## main.py
 
