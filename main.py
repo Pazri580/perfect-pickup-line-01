@@ -20,6 +20,29 @@ def output_path():
     return os.path.join(directory, "entry.txt")
 
 
+def validate(text):
+    """Collect every problem with the written text, if any.
+
+    Returns a list of human-readable problems; an empty list means
+    the text is a single non-empty line within the length limit.
+    Gathering all of them at once beats stopping at the first one,
+    so a bad entry reports everything wrong with it in one go.
+    """
+    problems = []
+    lines = text.splitlines()
+    if len(lines) != 1:
+        problems.append(f"expected 1 line, got {len(lines)}")
+        return problems
+    line = lines[0]
+    if not line.strip():
+        problems.append("entry is blank")
+    if len(line) < 1:
+        problems.append("entry is empty")
+    if len(line) > MAX_CHARS:
+        problems.append(f"entry is {len(line)} chars, over {MAX_CHARS}")
+    return problems
+
+
 def main():
     path = output_path()
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -27,17 +50,12 @@ def main():
         handle.write(LINE + "\n")
     with open(path, encoding="utf-8") as handle:
         written = handle.read()
-    lines = written.splitlines()
-    if len(lines) != 1:
-        print(f"expected 1 line, got {len(lines)}", file=sys.stderr)
+    problems = validate(written)
+    if problems:
+        for problem in problems:
+            print(problem, file=sys.stderr)
         return 1
-    if not lines[0].strip():
-        print("entry is blank", file=sys.stderr)
-        return 1
-    if len(lines[0]) > MAX_CHARS:
-        print(f"entry is {len(lines[0])} chars, over {MAX_CHARS}", file=sys.stderr)
-        return 1
-    print(f"wrote {len(lines[0])} chars to {path}")
+    print(f"wrote {len(written.splitlines()[0])} chars to {path}")
     return 0
 
 
